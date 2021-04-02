@@ -14,11 +14,11 @@ class Login extends Controller
         //获取表单元素
         $param = input('post.');
         
-        //$code = $param['code'];
-        //$captcha=new \think\captcha\Captcha();
-        //if(!$captcha->check($code))	{
-        //    $this->error('验证码错误');
-        //}
+        $code = $param['code'];
+        $captcha=new \think\captcha\Captcha();
+        if(!$captcha->check($code))	{
+            $this->error('验证码错误');
+        }
         
         //判断是否输入邮箱
         if(empty(input('post.email'))){
