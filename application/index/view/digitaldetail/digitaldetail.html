@@ -1,0 +1,105 @@
+{include file="./public/common/top.html"/}
+<br />
+<br />
+<main class="page product-page">
+    <section class="clean-block clean-product dark">
+        <div class="container">
+            <div class="block-heading">
+                <h2 class="text-info">产品信息</h2>
+                <p>{$digital.goods_name}</p>
+            </div>
+            <div class="block-content">
+                <div class="product-info">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="img_info">
+                                <a href="__ROOT__/assets/img/goods_img/{$digital.img_url}">
+                                	<img class="img-fluid d-block mx-auto" src="__ROOT__/assets/img/goods_img/{$digital.img_url}">
+                                </a>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="info">
+                                <h3>{$digital.goods_name}</h3>
+                                <div class="rating">
+	                                <img src="__ROOT__/assets/img/star.svg">
+	                                <img src="__ROOT__/assets/img/star.svg">
+	                                <img src="__ROOT__/assets/img/star.svg">
+	                                <img src="__ROOT__/assets/img/star-half-empty.svg">
+	                                <img src="__ROOT__/assets/img/star-empty.svg"></div>
+                                <div class="price">
+                                    <h3>￥{$digital.max_price}</h3>
+                                    <h5>当前库存:{$digital.stock}</h5>
+                                </div><a href="{:url('cart/addcart')}?goods_id={$digital.goods_id}">
+                                	<button class="btn btn-primary" type="button" id="addcart" gd_id="{$digital.goods_id}">
+                                		<i class="icon-basket"></i>加入购物车
+                                	</button>
+                                </a>
+                                <div class="summary">
+                                    <h4>详细信息:</br>
+                                        {$digital.description}</h4>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="product-info">
+                    <div>
+                        <ul class="nav nav-tabs tabs-border" id="myTab">
+                            <li class="nav-item"><a class="nav-link active" role="tab" data-toggle="tab" id="description-tab" href="#description">详情</a></li>
+                            <li class="nav-item"><a class="nav-link" role="tab" data-toggle="tab" id="reviews-tab" href="#reviews">评价</a></li>
+                        </ul>
+                        <div class="tab-content" id="myTabContent">
+                            <div class="tab-pane active fade show description" role="tabpanel" id="description">
+                                <p>{$digital.description}</p>
+                                <div class="row">
+                                    <div class="col-md-5">
+                                        <figure class="figure"><img class="img-fluid d-block mx-auto" src="__ROOT__/assets/img/goods_img/{$digital.img_url}"></figure>
+                                    </div>
+                                    <div class="col-md-7">
+                                        <h4>{$digital.goods_name}</h4>
+                                        <p>{$digital.description}</p>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-7 right">
+                                        <h4>{$digital.goods_name}</h4>
+                                        <p>{$digital.description}</p>
+                                    </div>
+                                    <div class="col-md-5">
+                                        <figure class="figure"><img class="img-fluid d-block mx-auto" src="__ROOT__/assets/img/goods_img/{$digital.img_url}"></figure>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade show" role="tabpanel" id="reviews">
+                                <div class="reviews">
+                                    <div class="review-item">
+                                        <div class="rating"><img src="__ROOT__/assets/img/star.svg"><img src="__ROOT__/assets/img/star.svg"><img src="__ROOT__/assets/img/star.svg"><img src="__ROOT__/assets/img/star.svg"><img src="__ROOT__/assets/img/star-empty.svg"></div>
+                                        <h4>手*****机</h4><span class="text-muted">2020-6-23</span>
+                                        <p>这个电脑看到就超级喜欢。安装Office时出了问题，急的像热锅上的蚂蚁团团转。thanks to 客服林溪，为我解决问题，从下午一直到晚上十一点多，随用随到，细致耐心，而且解决的超级完美超有水平。我这个电脑小白感觉超级喜欢她，超级喜欢。必须好评。不然我现在还在抱着电脑难受呢，超级喜欢林溪。希望她工作顺利，万事胜意，知识水涨船高，每天开心。还有客服野牛为我推荐的这款电脑，超级喜欢。也要感谢野牛。</p>
+                                    </div>
+                                </div>
+                                <div class="reviews">
+                                    <div class="review-item">
+                                        <div class="rating"><img src="__ROOT__/assets/img/star.svg"><img src="__ROOT__/assets/img/star.svg"><img src="__ROOT__/assets/img/star.svg"><img src="__ROOT__/assets/img/star.svg"><img src="__ROOT__/assets/img/star-empty.svg"></div>
+                                        <h4>电******脑</h4><span class="text-muted">2020-6-24</span>
+                                        <p>用了几天特地说说感受，触摸屏幕够靓丽够骚，充电线就是数据线非常方便，终于出门不用带手机充电器器了，而且笔记本就是一大号充电宝。打游戏散热可以接受，但是夏天还要配个散热底座才行，平常倒是上网冰凉，续航时间也很不错，上网看电影能用5-6小时。说说缺点：两个USB口还有一个是2.0的，我都买笔记本还差那几十元成本吗？另外HDMI接口也可以换成全功能USB-C接口啊！</p>
+                                    </div>
+                                </div>
+                                <div class="reviews">
+                                    <div class="review-item">
+                                        <div class="rating"><img src="__ROOT__/assets/img/star.svg"><img src="__ROOT__/assets/img/star.svg"><img src="__ROOT__/assets/img/star.svg"><img src="__ROOT__/assets/img/star.svg"><img src="__ROOT__/assets/img/star-empty.svg"></div>
+                                        <h4>平*****板</h4><span class="text-muted">2020-6-25</span>
+                                        <p>很不错的一件宝贝，这次购物体验非常愉快，开机速度超赞👍，散热也好，风扇基本没有声音，唯一可惜的是没有标配鼠标，还要自己买，这点不好,office安装时出现了一点小问题，但是很快就解决了。很不错😊，物理也快</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="clean-related-items"></div>
+            </div>
+        </div>
+    </section>
+</main>
+{include file="./public/common/bottom.html"/} 

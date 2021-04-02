@@ -1,0 +1,150 @@
+{include file="./public/common/top.html"/}
+<script type="text/javascript">
+$(document).ready(function() {
+    layui.use('layer', function() {
+        $('#pay').click(function name(params) {
+            var add_id = $("#adds").val();
+            var index = layer.open({
+                title: "支付订单",
+                type: 1,
+                area: ['350px', '300px'],
+                content: $('#paybox'),
+                btn: ['我已支付', '我再看看'],
+                yes: function() {
+                    $.ajax({
+                        type: "POST",
+                        url: "{:url('order/addOrder')}",
+                        data: {
+                            add_id: add_id
+                        },
+                        success: function(res) {
+                            res = JSON.parse(res);
+                            if (res.code == 0) {
+                                layer.open({
+                                    title: '下单成功！',
+                                    content: '您的订单号是' + res.od_id,
+                                    btn: '我知道了',
+                                    yes:function(){
+                                        window.location.href = "{:url('personal/personal')}";
+                                    }
+                                })
+                                
+                            }
+                        }
+                    })
+                }
+            });
+        })
+        $("#add-address").unbind('click').bind("click",function() {
+            var index = layer.open({
+                title: "添加地址",
+                type: 1,
+                area: ['350px', '510px'],
+                content: $('#add-address-box')
+            });
+            $("#sub_address").click(function() {
+                var receiver = $('#add_receiver').val();
+                var address = $('#add_address').val();
+                var tel = $('#tel').val();
+                var post = $('#post').val();
+                if (receiver == '' || address == '' || tel == '' || post == '') {
+                    layer.msg('必填项不能为空');
+                    return;
+                }
+                $.ajax({
+                    type: "POST",
+                    url: "{:url('order/addAddress')}",
+                    data: {
+                        receiver: receiver,
+                        address: address,
+                        tel: tel,
+                        post: post
+                    },
+                    success: function(data) {
+                        data = JSON.parse(data);
+                        if (data.code == 0) {
+                            layer.msg('添加成功！', {
+                                shift: -1,
+                                time: 500
+                            }, function() {
+                                layer.close(index);
+                                location.reload();
+                            })
+                        }
+
+                    }
+                })
+            })
+        })
+    })
+})
+</script>
+<br />
+<main class="page payment-page">
+    <section class="clean-block payment-form dark">
+        <div class="container">
+            <div class="block-heading">
+                <h2 class="text-info">支付订单</h2>
+                <p>请确认您的订单信息</p>
+            </div>
+            <form>
+                <div class="products">
+                    <h3 class="title">订单信息</h3>
+                    {assign name="sum" value="0" /}
+                    {foreach $goods as $digital}
+                    {assign name="sum" value="$sum+$digital.max_price*$digital.num "/}
+                        <div class="item">
+                        <span class="price">￥{$digital.max_price}x{$digital.num}</span>
+                            <p class="item-name">{$digital.goods_name}</p>
+                            <p class="item-description">{$digital.description}<</p>
+                        </div>
+                       {/foreach}
+                    <div class="total"><span>总价</span><span class="price">￥{$sum}</span></div>
+                </div>
+                <div class="card-details">
+                    <h3 class="title">我的地址</h3>
+                    <div class="form-row">
+                        <div class="col-sm-12">
+                            <select class="form-control form-control-lg" id="adds">
+                            {foreach $result as $address}
+                                    <option value="{$address.add_id}">{$address.address}</option>
+                            {/foreach}
+                            </select>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="form-group"><button class="btn btn-success btn-block" type="button" id="add-address">添加地址</button></div>
+                            <div class="form-group"><button class="btn btn-primary btn-block" type="button" id="pay">支付订单</button></div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </section>
+</main>
+<div id="add-address-box" style="display:none">
+    <form>
+        <div class="form-group">
+            <label for="exampleInputEmail1">收件人*</label>
+            <input type="text" class="form-control" id="add_receiver">
+        </div>
+        <div class="form-group">
+            <label for="exampleInputPassword1">详细地址*</label>
+            <input type="text" class="form-control" id="add_address">
+        </div>
+        <div class="form-group">
+            <label for="exampleInputPassword1">电话*</label>
+            <input type="text" class="form-control" id="tel">
+        </div>
+        <div class="form-group">
+            <label for="exampleInputPassword1">邮编*</label>
+            <input type="text" class="form-control" id="post">
+        </div>
+        <button type="button" class="btn btn-primary" id="sub_address">确定</button>
+    </form>
+</div>
+<div id="paybox" style="display: none;width: 350px;text-align:center">
+    <p>请扫码支付</p>
+    <img src="__ROOT__/assets/img/wechatpay.png" style="width: 140px;height: auto;display: inline-block;">
+    <img src="__ROOT__/assets/img/alipay.png" style="width: 140px;height: auto;display: inline-block;">
+</div>
+{include file="./public/common/bottom.html"/}

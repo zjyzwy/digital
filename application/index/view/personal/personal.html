@@ -1,0 +1,348 @@
+{include file="./public/common/top.html"/}
+<script>
+function changeStatus(id,status){
+	$.ajax({
+		type: "POST",
+		url: "{:url('personal/changeStatus')}",
+		data: {
+            id:id,
+            status:status
+        },
+		success: function(data){
+			data = JSON.parse(data);
+			if(data.code==0){
+				var ids = '#'+data.id;
+				if(status==1){
+					$(ids).html("<span><a href = '#' onclick='changeStatus("+id+",2);'>"+"进行评价</a></span>");
+				}else if(status==2){
+					$(ids).html("<span>已评价</span>");
+				}
+				
+			}
+		}
+	})
+}
+
+
+function addAddress(){
+	layui.use(['form', 'layer'], function() {
+            var index = layer.open({
+                title: "添加地址",
+                type: 1,
+                area: ['350px', '510px'],
+                content: $('#add-address-box')
+            })
+            $('#sub_address').unbind('click').bind("click",function() {
+                var receiver = $('#add_receiver').val();
+                var address = $('#add_address').val();
+                var tel = $('#tel').val();
+                var post = $('#post').val();
+                $.ajax({
+                    type: "POST",
+                    url: "{:url('order/addAddress')}",
+                    data: {
+                        receiver: receiver,
+                        address: address,
+                        tel: tel,
+                        post: post
+                    },
+                    success: function(data) {
+                        data = JSON.parse(data);
+                        if (data.code == 0) {
+                        	var receiver = $('#add_receiver').val("");
+                            var address = $('#add_address').val("");
+                            var tel = $('#tel').val("");
+                            var post = $('#post').val("");
+                            layer.msg('添加成功！', {
+                                shift: -1,
+                                time: 500
+                            }, function() {
+                                layer.close(index);
+                                getAddress();
+                            })
+                        }
+
+                    }
+                })
+            })
+    })
+}
+
+function getAddress() {
+    $.ajax({
+        type: "POST",
+        url: "{:url('personal/getAddress')}",
+        success: function(data) {
+            data = JSON.parse(data);
+            if (data.code == 0) {
+                var addressInfo = data.data;
+                $("#address-list").html('<li class="list-group-item">暂无</li>');
+                var str = '';
+                if (addressInfo.length == 0) {
+                    $("#address-list").html('<li class="list-group-item">暂无，快去添加地址吧！</li>');
+                } else {
+                    for (var i = 0; i < addressInfo.length; i++) {
+                        str += '<li class="list-group-item" id="'+addressInfo[i].add_id+'">收件人：' + addressInfo[i].receiver +
+                            ' | 收件地址：' + addressInfo[i].address +
+                            ' | 手机号：' + addressInfo[i].tel +
+                            ' | 邮编：' + addressInfo[i].post + '<button class="btn btn-danger btn-sm del-address" onclick="delAddress(this,'+addressInfo[i].add_id+');">删除地址</button>'+
+                            '&nbsp;&nbsp;<button class="btn btn-success" id="edit'+addressInfo[i].add_id+'" onclick="changeAddress(this,'+addressInfo[i].add_id+');">编辑地址</button>'+'</li>';
+                    }
+                    $("#address-list").html(str);
+                }
+
+            }
+        }
+    })
+}
+
+function changeAddress(thisobj,add_id){
+	layui.use(['form', 'layer'], function() {
+	var index = layer.open({
+        title: "修改地址",
+        type: 1,
+        area: ['350px', '510px'],
+        content: $('#add-address-box')
+    });
+	$.ajax({
+    	type: "POST",
+    	url: "{:url('personal/getOnlyAddress')}",
+    	data:{
+    		add_id:add_id
+    	},
+    	success: function(data){
+    		data = JSON.parse(data);
+    		if(data.code==0){
+    			data = data.data;
+    			$('#add_receiver').val(data.receiver);
+    		    $('#add_address').val(data.address);
+    		    $('#tel').val(data.tel);
+    		    $('#post').val(data.post);
+    		    
+    		}
+    	}
+    })
+     $('#sub_address').unbind('click').bind("click",function() {
+                    var receiver = $('#add_receiver').val();
+                    var address = $('#add_address').val();
+                    var tel = $('#tel').val();
+                    var post = $('#post').val();
+                    $.ajax({
+                        type: "POST",
+                        url: "{:url('order/changeAddress')}",
+                        data: {
+                        	add_id:add_id,
+                            receiver: receiver,
+                            address: address,
+                            tel: tel,
+                            post: post
+                        },
+                        success: function(data) {
+                            data = JSON.parse(data);
+                            if (data.code == 0) {
+                            	$('#add_receiver').val("");
+                                $('#add_address').val("");
+                                $('#tel').val("");
+                                $('#post').val("");
+                                layer.msg('修改成功！', {
+                                    shift: -1,
+                                    time: 500
+                                }, function() {
+                                    layer.close(index);
+                                    getAddress();
+                                })
+                            }
+
+                        }
+                    })
+                })
+	})
+}
+
+function delAddress(thisobj,add_id){
+	$.ajax({
+		type: "POST",
+		url: "{:url('personal/deleteAddress')}",
+		data: {
+            add_id:add_id
+        },
+		success: function(data){
+			data = JSON.parse(data);
+			if(data.code==0){
+				$(thisobj).parent().remove();
+			}
+		}
+	})
+	
+}
+
+function getOrders(){
+	$.ajax({
+        type: "POST",
+        url: "{:url('personal/getOrder')}",
+        success: function(data) {
+            data = JSON.parse(data);
+            if (data.code == 0) {
+                var orderInfo = data.data;
+                $("#orders-list").html('<li class="list-group-item">暂无</li>');
+                var str = '';
+                var detail = '';
+                if (orderInfo.length == 0) {
+                    $("#orders-list").html('<li class="list-group-item">暂无，快去添加地址吧！</li>');
+                } else {
+                    for (var i = 0; i < orderInfo.length; i++) {
+                        str += '<li class="list-group-item">' + 
+                        '<div class="row justify-content-center align-items-center product-box">'+
+						'<div class="col-md-3">'+
+							'<div class="product-image">'+
+								"<img class='img-fluid d-block mx-auto image' style='height: 100px; float: left;' src='__ROOT__/assets/img/goods_img/"+
+								orderInfo[i].img_url+"'>"+
+							'</div></div>'+
+							'<div class="col-6 col-md-2 price">'+
+							orderInfo[i].goods_name+
+									'</div>'+
+									'<div class="col-6 col-md-2 price"> ￥<span>'+
+									orderInfo[i].orders_price+
+									'x'+orderInfo[i].goods_count+
+									'</span></div>'+
+									'<div class="col-6 col-md-2"> <span id="'+orderInfo[i].id+'"><span>';
+									if(orderInfo[i].is_status.toString()=="已发货"){
+										str+="<a href = '#' onclick='changeStatus("+orderInfo[i].id+",1);'>"+"确认收货</a>";
+									}else if(orderInfo[i].is_status.toString()=="已收货"){
+										//str+="<a href="+'"'+"{:url('personal/doEvaluate')}?id="+orderInfo[i].id+'"'+">进行评价</a>";
+										str+="<a href = '#' onclick='changeStatus("+orderInfo[i].id+",2);'>"+"进行评价</a>";
+									}else{
+										//str+="<a href='#'>"+orderInfo[i].is_status+"</a>";
+										str+=orderInfo[i].is_status;
+									}
+									str+='</span></span></div>'+
+									'</li>';
+                    }
+                    
+                    $("#orders-list").html(str);
+                }
+
+            }
+        }
+    })
+}
+</script>
+<br />
+<main class="page">
+    <section class="clean-block">
+        <div class="container">
+            <div class="block-heading">
+                <h2 class="text-info">个人中心<span id="isBanned"></span></h2>
+            </div>
+            <div class="block-content" id="b-content1">
+                <div class="row" id="cont1">
+                    <div class="col-xl-3 mb-4">
+                        <div class="card">
+                            <img src="__ROOT__/assets/img/avatars/default_avatar.jpg" class="card-img-top" alt="avatar">
+                            <div class="card-body" align="center">
+                                <h5 class="card-title" id="user-name"></h5>
+                                <p class="card-text" id="sex"></p>
+                                <a href="{:url('cart/cart')}" class="btn btn-primary">我的购物车</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-5 mb-4">
+                        
+                    </div>
+                    <div class="col-xl-4 mb-4">
+                        <div class="card" style="text-align:center">
+                            <h5 class="card-header">我的日历</h5>
+                            <br>
+                            <div class="card-body">
+                                <h2 class="card-title" id="time-day"></h2>
+                                <br>
+                                <p class="card-text" id="time-week"></p>
+                                <br>
+                                <h4 class="card-title" id="time-date"></h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion" id="accordionItem">
+                    <div class="card">
+                        <div class="card-header" id="headingOne">
+                            <h2 class="mb-0">
+                                <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne" onclick="getAddress();">
+                                    我的地址
+                                </button>
+                                <button class="btn btn-success" type="button" id="add-address" onclick="addAddress();">添加地址</button>
+                            </h2>
+                        </div>
+                        <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordionItem">
+                            <div class="card-body">
+                                <ul class="list-group" id="address-list">
+                                    <li class="list-group-item">暂无</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion" id="orderItem">
+                    <div class="card">
+                        <div class="card-header" id="headingTne">
+                            <h2 class="mb-0">
+                                <button class="btn btn-info" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseOne" onclick="getOrders();">
+                                    我的订单
+                                </button>
+                            </h2>
+                        </div>
+                        <div id="collapseTwo" class="collapse" aria-labelledby="headingTne" data-parent="#orderItem">
+                            <div class="card-body">
+                                <ul class="list-group" id="orders-list">
+                                    <li class="list-group-item">暂无</li>
+                                    
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+<div id="add-address-box" style="display:none">
+    <form>
+        <div class="form-group">
+            <label for="exampleInputEmail1">收件人</label>
+            <input type="text" class="form-control" id="add_receiver">
+        </div>
+        <div class="form-group">
+            <label for="exampleInputPassword1">详细地址</label>
+            <input type="text" class="form-control" id="add_address">
+        </div>
+        <div class="form-group">
+            <label for="exampleInputPassword1">电话</label>
+            <input type="text" class="form-control" id="tel">
+        </div>
+        <div class="form-group">
+            <label for="exampleInputPassword1">邮编</label>
+            <input type="text" class="form-control" id="post">
+        </div>
+        <button type="button" class="btn btn-primary" id="sub_address">确定</button>
+    </form>
+</div>
+{include file="./public/common/bottom.html"/} 
+<script>
+    var date = new Date();
+    document.getElementById('time-day').innerHTML = date.getDate();
+    if (date.getDay() == 1) {
+        document.getElementById('time-week').innerHTML = "星期一";
+    } else if (date.getDay() == 2) {
+        document.getElementById('time-week').innerHTML = "星期二";
+    } else if (date.getDay() == 3) {
+        document.getElementById('time-week').innerHTML = "星期三";
+    } else if (date.getDay() == 4) {
+        document.getElementById('time-week').innerHTML = "星期四";
+    } else if (date.getDay() == 5) {
+        document.getElementById('time-week').innerHTML = "星期五";
+    } else if (date.getDay() == 6) {
+        document.getElementById('time-week').innerHTML = "星期六";
+    } else {
+        document.getElementById('time-week').innerHTML = "星期日";
+    }
+    document.getElementById("time-date").innerHTML = date.getFullYear() + "," + (date.getMonth()+1);
+</script>

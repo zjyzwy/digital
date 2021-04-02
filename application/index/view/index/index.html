@@ -1,0 +1,47 @@
+{include file="./public/common/top.html"/}
+<main class="page landing-page">
+<section class="clean-block clean-gallery dark">
+	<div class="container">
+		<div class="block-heading">
+			<h2 class="text-info">精品推荐</h2>
+			<p>精选评价最高产品</p>
+		</div>
+		<div id="content" class="container">
+		<div id="search_div" class="block-heading">
+			<form method="post" action="{:url('index/index')}">
+				<span class="input_span">商品名：<input type="text" name="goods_name"/></span>
+				<span class="input_span">商品种类： <select name="brand">
+						<Option value="">不限</option> 
+						{foreach $brands as $brand}
+						<Option value="{$brand.brand}">{$brand.brand}</option>
+						{/foreach}
+				</select>
+				</span> <span class="input_span">商品价格区间：<input type="text"
+					name="minprice" value="0" /> - <input type="text" name="maxprice"
+					value="10000" /></span> <input type="submit" value="查 询" class="btn btn-success btn-sm">
+			</form>
+		</div>
+		<div class="row">
+			{foreach $results as $digital}
+			<div class="col-md-6 col-lg-4 item ">
+				<div class="product-show-container">
+					<div class="product-img ">
+						<a href="__ROOT__/index.php/index/digitaldetail/digitaldetail.html?gd_id={$digital.goods_id}"> <img
+							src="__ROOT__/assets/img/goods_img/{$digital.img_url}" alt="">
+						</a>
+					</div>
+					<div class="product-show-info">
+						<a href="__ROOT__/index.php/index/digitaldetail/digitaldetail.html?gd_id={$digital.goods_id}">
+							<p>{$digital.goods_name}</p>
+						</a>
+					</div>
+					<div class="product-price">
+						<p>￥{$digital.max_price}</p>
+					</div>
+				</div>
+			</div>
+			{/foreach}
+		</div>
+	</div>
+</section>
+{include file="./public/common/bottom.html"/} 

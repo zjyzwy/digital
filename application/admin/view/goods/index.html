@@ -1,0 +1,40 @@
+<body>
+<center>
+{include  file="./public/common/admintop.html"/}
+<meta charset="utf-8">
+<br />
+<br />
+<br />
+<br />
+<br />
+<div class="container">
+<a href="{:url('goods/digitaladd')}"><button class="btn btn-success" type="button">添加商品</button></a>
+<br />
+<table width="999px" border="1" cellpadding="0" cellspacing="1" class="table table-striped">
+			<tr align="center" valign="middle"><th width="100px" height="30" align="center" valign="middle">商品编号</th>
+				<th width="150px" align="center" valign="middle">商品图片</th>
+				<th width="110px" height="30" align="center" valign="middle">商品名称</th>
+				<th width="100px" align="center" valign="middle" >单价</th>
+				<th width="100px" align="center" valign="middle" >库存</th>				
+				<th width="100px" align="center" valign="middle">操作</th>				
+			
+			</tr>
+			{foreach  $digitals as $digital}
+			
+			<tr><td valign="middle" bgcolor="#FFFFFF"  align="center">{$digital.goods_id}</td>
+				<td align="center" valign="middle" bgcolor="#FFFFFF">
+					<img src="__ROOT__/assets/img/goods_img/{$digital.img_url}" width="60" heigth="60" border=0>
+				</td>
+				<td valign="middle" bgcolor="#FFFFFF">{$digital.goods_name}</td>
+				<td valign="middle" bgcolor="#FFFFFF"  align="center">{$digital.max_price }元</td>
+				<td valign="middle" bgcolor="#FFFFFF"  align="center">{$digital.stock}件</td>
+				<td valign="middle"  align="center"  bgcolor="#FFFFFF">
+				<a href="{:url('goods/digitalupdate')}?goods_id={$digital.goods_id}">修改</a>
+				<a href="{:url('goods/digitalDelete')}?goods_id={$digital.goods_id}">删除</a>
+				</td>
+			</tr>
+			{/foreach}
+			</table>
+			</div>
+</center>
+<br /><br /><br /><br /></body>

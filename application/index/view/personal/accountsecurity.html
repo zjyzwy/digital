@@ -1,0 +1,88 @@
+{include file="./public/common/top.html"/}
+<main class="page">
+        <section class="clean-block clean-form dark">
+            <div class="container" id="b-con1">
+                <div class="block-heading">
+                    <h2 class="text-info">账户安全</h2>
+                </div>
+                <div class="block-content">
+                    <h3 class="text-info">密码更改</h3>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="old-passw">旧密码</span>
+                        </div>
+                        <input type="password" class="form-control" placeholder="请输入旧密码" aria-label="Old-password" aria-describedby="old-passw" id="oldPass" value="">
+                    </div>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="new-passw">新密码</span>
+                        </div>
+                        <input type="password" class="form-control" placeholder="请输入新密码" aria-label="New-password" aria-describedby="new-passw" id="newPass" value="">
+                    </div>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="confirm-passw">再次确认密码</span>
+                        </div>
+                        <input type="password" class="form-control" placeholder="请确认新密码" aria-label="Confirm-passw" aria-describedby="confirm-passw" id="confirmPass" value="">
+                    </div>
+                    <div class="input-group mb-3">
+                        
+                        <button type="button" class="btn btn-danger" id="change_passw">更改密码</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    <script>
+        $('#change_passw').unbind('click').bind("click",function () {
+                var OldPass = $('#oldPass').val();
+                var newPass = $('#newPass').val();
+                var confirmPass = $('#confirmPass').val();
+                layui.use('layer', function () {
+                    var layer = layui.layer;
+                    if(OldPass==""){
+                    	layer.msg("旧密码不能为空！");
+                        return;
+                    }
+                    if(newPass==""){
+                    	layer.msg("新密码不能为空！");
+                        return;
+                    }
+                    if(confirmPass==""){
+                    	layer.msg("确认密码不能为空！");
+                        return;
+                    }
+                    if(newPass!=confirmPass){
+                        layer.msg("两次密码输入不一致！");
+                        return;
+                    }
+                    if(OldPass == newPass){
+                        layer.msg("新密码与旧密码不能相同！");
+                        return;
+                    }
+                    $.ajax({
+                    method: "POST",
+                    url: "{:url('personal/changePassword')}",
+                    data: {
+                        OldPass:OldPass,
+                        newPass:newPass
+                    },
+                    dataType: "json",
+                    success:function (data) {
+                        if(data['status']== 'err'){
+                            layer.msg("旧密码错误！");
+                        }else if(data['status']== 'ok'){
+                            layer.msg('密码已更改，请重新登陆！',{ shift:-1, time: 1000 },function () {
+                                document.location.href="{:url('login/logOut')}";
+                            });
+                        }
+                    },error:function (){
+                        alert("出现错误");
+                    }
+                    });
+                });
+                
+            }
+        );
+    </script> 
+{include file="./public/common/bottom.html"/}

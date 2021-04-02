@@ -1,0 +1,116 @@
+{include file="./public/common/top.html"/}
+<script type="text/javascript" src="__ROOT__/public/static/js/jquery-1.4.2.js"></script>
+<script type="text/javascript">
+$(function(){
+	total();
+	$('.quantity-input').each(function(){
+		$(this).bind('input porpertychange',function(){
+			$.get("{:url('cart/updateCart')}",{"cartID":$(this).attr("id"),"num":$(this).val()});
+			total();
+		});
+	});
+});
+
+function total(){
+	var sum = 0;
+	$('#product .price').each(function(){
+		var price = parseFloat($(this).find("span").text());
+		var num = parseFloat($(this).siblings("div").find("input[name='num']").val());
+		sum +=price*num;
+	})
+	$('#total-price').text("￥"+sum);
+	$('#real-price').text("￥"+sum);
+}
+
+function del(thisobj,cartID){
+	$(thisobj).parent().parent().remove();
+	total();
+	$.get("{:url('cart/deleteCart')}",{"cartID":cartID});
+}
+
+function cleanCart(){
+	$("#product").remove();
+	$.get("{:url('cart/clearCart')}");
+	total();
+}
+
+</script>
+<br />
+<main class="page shopping-cart-page">
+<section class="clean-block clean-cart dark">
+	<div class="container">
+		<div class="block-heading">
+			<h2 class="text-info">购物车</h2>
+			<p>快去挑选你喜欢的商品吧！</p>
+		</div>
+		<div class="content">
+			<div class="row no-gutters">
+				<div class="col-md-12 col-lg-9">
+					<div class="items">
+						<div class="product" id ="product">
+						{foreach $result as $digital}
+							<div
+								class="row justify-content-center align-items-center product-box">
+								<div class="col-md-3">
+									<div class="product-image">
+										<img class="img-fluid d-block mx-auto image" style='height: 180px; float: left;'
+											src="__ROOT__/assets/img/goods_img/{$digital.img_url}">
+									</div>
+								</div>
+								<div class="col-md-4 product-info sc-pro-name">
+									<a href="#">
+										{$digital.goods_name}
+									</a>
+									<div class="product-specs">
+										<div>
+											<span class="value">
+												{$digital.description}
+											</span>
+										</div>
+									</div>
+								</div>
+								<div class="col-6 col-md-2 quantity">
+									<label class="d-none d-md-block" for="quantity">数量</label>
+									<input type="number" id="{$digital.cartID}" class="form-control quantity-input"
+										value="{$digital.num}"  name="num" min="1" good-id="" good-price="" onclick="change(this);">
+								</div>
+								<div class="col-6 col-md-2 price">
+									￥<span>{$digital.max_price}</span>
+								</div>
+								<div class="col-6 col-md-1 btn-del">
+									<button type="button" class="btn btn-danger del-btn" onclick="del(this,{$digital.cartID});">删除</button>
+								</div>
+							</div>
+							{/foreach}
+						</div>
+					</div>
+				</div>
+				<div class="col-md-12 col-lg-3">
+					<div class="summary">
+						<h3>概览</h3>
+						<h4>
+							<span class="text">总金额</span><span class="price" id="total-price">￥</span>
+						</h4>
+						<h4>
+							<span class="text">折扣</span><span class="price">$0</span>
+						</h4>
+						<h4>
+							<span class="text">应付</span><span class="price" id="real-price">￥</span>
+						</h4>
+						<a href="{:url('order/order')}">
+							<button class="btn btn-primary btn-block btn-sm" type="button">提交订单</button>
+						</a>
+						<a href="javascript::void(0)">
+							<button class="btn btn-danger btn-block btn-sm" type="button" id="clear-cart" onclick="cleanCart();">清空购物车</button>
+						</a>
+						<a href="{:url('index/index')}">
+							<button class="btn btn-success btn-block btn-sm" type="button">继续购物</button>
+						</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+</main>
+{include file="./public/common/bottom.html"/}

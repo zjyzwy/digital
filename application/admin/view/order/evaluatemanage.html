@@ -1,0 +1,119 @@
+{include file="./public/common/admintop.html"/}
+<script>
+function deleteEvaluation(id){
+	$.ajax({
+		type: "POST",
+		url: "{:url('order/deleteEvaluation')}",
+		data: {
+            id:id
+        },
+		success: function(data){
+			data = JSON.parse(data);
+			if(data.code==0){
+				var ids = "#evaluation"+id;
+				var idss = "#reply"+id;
+				$(ids).text("");
+				$(idss).text("");
+			}
+		}
+	})
+	
+}
+
+function reply(id){
+	layui.use(['form', 'layer'], function() {
+            var index = layer.open({
+                title: "回复评论",
+                type: 1,
+                area: ['280px', '250px'],
+                content: $('#add-address-box')
+            })
+            $('#sub_reply').unbind('click').bind("click",function() {
+                var reply = $('#reply').val();
+                $.ajax({
+                    type: "POST",
+                    url: "{:url('order/reply')}",
+                    data: {
+                    	id:id,
+                    	reply:reply
+                    },
+                    success: function(data) {
+                        data = JSON.parse(data);
+                        if (data.code == 0) {
+                            $('#reply').val("");
+                            layer.msg('回复成功！', {
+                                shift: -1,
+                                time: 500
+                            }, function() {
+                            	var ids = "#reply"+id;
+                            	$(ids).text(reply);
+                                layer.close(index);
+                            })
+                        }
+
+                    }
+                })
+            })
+    })
+}
+</script>
+	<br />
+	<br />
+	<br />
+	<br />
+	<br />
+	<center>
+		<br />
+		<div class="container">
+		<form action="{:url('order/order')}" name="form1" method="post">
+
+			<table width="999px" border="1" cellpadding="0" cellspacing="1" class="table table-striped">
+				<tr align="center" valign="middle">
+					<th width="100" height="30" align="center" valign="middle">商品图片</th>
+					<th width="100" align="center" valign="middle">商品名称</th>
+					<th width="100" align="center" valign="middle">评价时间</th>
+					<th width="100" align="center" valign="middle">商品评价</th>
+					<th width="100" align="center" valign="middle">商家回复</th>
+					<th width="100" align="center" valign="middle">评论管理</th>
+				</tr>
+				{foreach $orders as $order}
+				<tr style='text-align: center; height: 50px; line-height: 50px;'>
+					<td align="center" valign="middle" bgcolor="#FFFFFF"><a
+						href="#"> <img
+							src="__ROOT__/assets/img/goods_img/{$order.img_url}" width=48
+							height=51 border=0></a></td>
+					<td align="center" valign="middle" bgcolor="#FFFFFF">{$order.goods_name}</td>
+					<td align="center" valign="middle" bgcolor="#FFFFFF">{$order.evaluate_time}</td>
+					<td align="center" valign="middle" bgcolor="#FFFFFF"
+						id="evaluation{$order.id}">{$order.evaluation}</td>
+					<td align="center" valign="middle" bgcolor="#FFFFFF" id="reply{$order.id}">
+					{if $order.evaluation neq ''}
+					{if $order.reply_evaluation eq ''}
+						<button class="btn btn-success" type="button" onclick="reply({$order.id});">回复</button>
+					{else}
+						{$order.reply_evaluation}
+					{/if}
+					{/if}
+					</td>
+					<td align="center" valign="middle" bgcolor="#FFFFFF">
+						<button type="button" class="btn btn-danger" id="change_passw" onclick="deleteEvaluation({$order.id})">删除</button>
+					
+					</td>
+				</tr>
+				{/foreach}
+			</table>
+		</form>
+		<div id="add-address-box" style="display: none">
+			<form>
+				<div class="form-group">
+					<label for="exampleInputEmail1">评论内容</label>
+					<input type="text" class="form-control" id="reply" value="谢谢您的支持">
+				</div>
+				<button type="button" class="btn btn-primary" id="sub_reply">确定</button>
+			</form>
+		</div>
+		</div>
+	</center>
+<br />
+<br />
+<br />
