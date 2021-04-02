@@ -10,3 +10,6 @@
 - 数据库：MySQL
 - 验证码插件：[Composer](https://www.phpcomposer.com/)
 - 后端开发框架：[ThinkPHP5.1](http://www.thinkphp.cn/)
+
+### 网站特点
+前端采用Bootstrap进行响应式网页设计，采用Layui进行网站弹窗用户交互
